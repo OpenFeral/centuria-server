@@ -1193,7 +1193,13 @@ public class Centuria {
 		else
 			sock = new ServerSocket(Integer.parseInt(serverProperties.getOrDefault("voice-chat-port", "37505")), 0,
 					InetAddress.getByName("0.0.0.0"));
-		voiceChatServer = new VoiceChatServer(sock);
+		for (ICenturiaModule module : ModuleManager.getInstance().getAllModules()) {
+			voiceChatServer = module.replaceVoiceChatServer(sock);
+			if (voiceChatServer != null)
+				break;
+		}
+		if (voiceChatServer == null)
+			voiceChatServer = new VoiceChatServer(sock);
 		voiceChatServer.start();
 
 		// Post-initialize modules
